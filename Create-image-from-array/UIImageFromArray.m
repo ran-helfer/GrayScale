@@ -14,6 +14,11 @@
 
 @implementation UIImageFromArray
 
+// CGDataProviderCreateWithData callback to free the pixel data buffer
+void freePixelData(void *info, const void *data, size_t size) {
+    free((void *)data);
+}
+
 - (UIImage *)getImageFromGrayScaleArray {
     
     int width = 2;
@@ -21,17 +26,24 @@
     
     // 1 byte for brightness, 1 byte for alpha
     int8_t data[] = {
-        0, 255,
-        0, 255,
-        0, 255,
-        0, 255,
+        255, 122,
+        122, 0,
     };
     
+    int imageSizeInPixels = width * height;
+    int bytesPerPixel = 2; // 1 byte for brightness, 1 byte for alpha
+    unsigned char *pixels = (unsigned char *)malloc(imageSizeInPixels * bytesPerPixel);
+    memset(pixels, 255, imageSizeInPixels * bytesPerPixel); // setting all alpha values to 255
+  
+    for (int i = 0; i < imageSizeInPixels; i++) {
+         pixels[i * 2] = data[i]; // writing array of bytes as image brightnesses
+    }
+    
     CGDataProviderRef provider = CGDataProviderCreateWithData (NULL,
-                                                               &data[0],
+                                                               &pixels[0],
                                                                // size is width * height * bytesPerPixel
                                                                width * height * [self bytesPerPixel],
-                                                               NULL);
+                                                               freePixelData);
     
     CGColorSpaceRef colorSpaceRef = CGColorSpaceCreateDeviceGray();
     
