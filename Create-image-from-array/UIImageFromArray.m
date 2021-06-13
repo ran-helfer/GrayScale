@@ -32,7 +32,7 @@ void freePixelData(void *info, const void *data, size_t size) {
     
     int imageSizeInPixels = width * height;
     int bytesPerPixel = 2; // 1 byte for brightness, 1 byte for alpha
-    unsigned char *pixels = (unsigned char *)malloc(imageSizeInPixels * bytesPerPixel);
+    int8_t *pixels = (int8_t *)malloc(imageSizeInPixels * bytesPerPixel);
     memset(pixels, 255, imageSizeInPixels * bytesPerPixel); // setting all alpha values to 255
   
     for (int i = 0; i < imageSizeInPixels; i++) {
@@ -54,7 +54,7 @@ void freePixelData(void *info, const void *data, size_t size) {
                                          width * [self bytesPerPixel],
                                          colorSpaceRef,
                                          // use this
-                                         kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big,
+                                         kCGImageAlphaLast | kCGBitmapByteOrderDefault,
                                          // instead of this
                                          //kCGBitmapByteOrderDefault,
                                          provider,
